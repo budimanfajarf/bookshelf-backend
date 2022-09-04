@@ -150,7 +150,7 @@ const update = (request, h) => {
       .code(400);
   }
 
-  const index = books.findIndex((note) => note.id === id);
+  const index = books.findIndex((book) => book.id === id);
 
   if (index !== -1) {
     const updatedAt = new Date().toISOString();
@@ -186,4 +186,28 @@ const update = (request, h) => {
     .code(404);
 };
 
-module.exports = { index, store, show, update };
+const destroy = (request, h) => {
+  const { id } = request.params;
+
+  const index = books.findIndex((book) => book.id === id);
+
+  if (index !== -1) {
+    books.splice(index, 1);
+
+    return h
+      .response({
+        status: 'success',
+        message: 'Buku berhasil dihapus',
+      })
+      .code(200);
+  }
+
+  return h
+    .response({
+      status: 'fail',
+      message: 'Buku gagal dihapus. Id tidak ditemukan',
+    })
+    .code(404);
+};
+
+module.exports = { index, store, show, update, destroy };
