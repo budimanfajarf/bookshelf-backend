@@ -1,12 +1,22 @@
 const { nanoid } = require('nanoid');
 const books = require('./books');
 
-const index = () => ({
-  status: 'success',
-  data: {
-    books,
-  },
-});
+const index = (request, h) => {
+  const mappedBooks = [...books].map((book) => ({
+    id: book.id,
+    name: book.name,
+    publisher: book.publisher,
+  }));
+
+  return h
+    .response({
+      status: 'success',
+      data: {
+        books: mappedBooks,
+      },
+    })
+    .code(200);
+};
 
 const store = (request, h) => {
   const {
