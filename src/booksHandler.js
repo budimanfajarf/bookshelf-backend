@@ -8,39 +8,33 @@ const mapBook = (book) => ({
 });
 
 const index = (request, h) => {
-  const { reading } = request.query;
+  const { reading, finished, name } = request.query;
+
+  let filteredBooks = [...books];
 
   if (reading && reading === '1') {
-    readingBooks = books
-      .filter((book) => book.reading === true)
-      .map((book) => mapBook(book));
-
-    return h
-      .response({
-        status: 'success',
-        data: {
-          books: readingBooks,
-        },
-      })
-      .code(200);
+    filteredBooks = filteredBooks.filter((book) => book.reading === true);
   }
 
   if (reading && reading === '0') {
-    unreadingBooks = books
-      .filter((book) => book.reading === false)
-      .map((book) => mapBook(book));
-
-    return h
-      .response({
-        status: 'success',
-        data: {
-          books: unreadingBooks,
-        },
-      })
-      .code(200);
+    filteredBooks = filteredBooks.filter((book) => book.reading === false);
   }
 
-  const mappedBooks = [...books].map((book) => mapBook(book));
+  if (finished && finished === '1') {
+    filteredBooks = filteredBooks.filter((book) => book.finished === true);
+  }
+
+  if (finished && finished === '0') {
+    filteredBooks = filteredBooks.filter((book) => book.finished === false);
+  }
+
+  if (name) {
+    filteredBooks = filteredBooks.filter((book) =>
+      book.name.toLowerCase().includes(name.toLowerCase())
+    );
+  }
+
+  const mappedBooks = filteredBooks.map((book) => mapBook(book));
 
   return h
     .response({
