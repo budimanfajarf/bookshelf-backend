@@ -50,8 +50,8 @@ const store = (request, h) => {
   }
 
   const id = nanoid(16);
-  const createdAt = new Date().toISOString();
-  const updatedAt = createdAt;
+  const insertedAt = new Date().toISOString();
+  const updatedAt = insertedAt;
   const finished = pageCount === readPage;
 
   const book = {
@@ -63,9 +63,9 @@ const store = (request, h) => {
     publisher,
     pageCount,
     readPage,
-    reading,
     finished,
-    createdAt,
+    reading,
+    insertedAt,
     updatedAt,
   };
 
@@ -93,4 +93,28 @@ const store = (request, h) => {
     .code(500);
 };
 
-module.exports = { index, store };
+const show = (request, h) => {
+  const { id } = request.params;
+
+  const book = books.find((n) => n.id === id);
+
+  if (book !== undefined) {
+    return h
+      .response({
+        status: 'success',
+        data: {
+          book,
+        },
+      })
+      .code(200);
+  }
+
+  return h
+    .response({
+      status: 'fail',
+      message: 'Buku tidak ditemukan',
+    })
+    .code(404);
+};
+
+module.exports = { index, store, show };
