@@ -1,12 +1,46 @@
 const { nanoid } = require('nanoid');
 const books = require('./books');
 
+const mapBook = (book) => ({
+  id: book.id,
+  name: book.name,
+  publisher: book.publisher,
+});
+
 const index = (request, h) => {
-  const mappedBooks = [...books].map((book) => ({
-    id: book.id,
-    name: book.name,
-    publisher: book.publisher,
-  }));
+  const { reading } = request.query;
+
+  if (reading && reading === '1') {
+    readingBooks = books
+      .filter((book) => book.reading === true)
+      .map((book) => mapBook(book));
+
+    return h
+      .response({
+        status: 'success',
+        data: {
+          books: readingBooks,
+        },
+      })
+      .code(200);
+  }
+
+  if (reading && reading === '0') {
+    unreadingBooks = books
+      .filter((book) => book.reading === false)
+      .map((book) => mapBook(book));
+
+    return h
+      .response({
+        status: 'success',
+        data: {
+          books: unreadingBooks,
+        },
+      })
+      .code(200);
+  }
+
+  const mappedBooks = [...books].map((book) => mapBook(book));
 
   return h
     .response({
